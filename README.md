@@ -11,6 +11,14 @@ The project is divided in two parts:
 - api: code related for API Rest.
 - common: all common classes, objects and traits.
 
+## Run in local environment
+
+From the terminal just run:
+
+```
+sbt api/run
+```
+
 ## API
 
 There are three endpoints implemented:
