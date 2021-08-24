@@ -4,7 +4,7 @@ import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
-import com.cc.Pruebas.pruebasDeMetodosDAO
+import .pruebasDeMetodosDAO
 import com.cc.config.ApiAppConfig
 import com.cc.db.dao.ProductDao
 import com.cc.routes.{PingRoutes, ProductRoutes}
@@ -25,12 +25,10 @@ object CCApiMain extends LazyLogging {
 
     // We need to create the schema in the db
     ProductDao.createSchema
-    //pruebasDeMetodosDAO
 
     //TODO maybe add a context class for services, routes, config, etc
 
     // Service layer
-    //TODO make it private
     val productsService = new ProductsService()
 
     // API Rest
