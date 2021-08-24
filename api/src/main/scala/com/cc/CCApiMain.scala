@@ -4,7 +4,6 @@ import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
-import .pruebasDeMetodosDAO
 import com.cc.config.ApiAppConfig
 import com.cc.db.dao.ProductDao
 import com.cc.routes.{PingRoutes, ProductRoutes}
