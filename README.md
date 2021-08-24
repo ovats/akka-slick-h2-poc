@@ -82,6 +82,5 @@ curl -X GET  http://localhost:8080/ping
 - Unit tests
 - Documentation of how to replace H2 with other databases like MySql, Postgres, etc.
 - OAS Specification (documentation)
-- Instructions to how to run with sbt in local environment (documentation)
 - Docker 
  
