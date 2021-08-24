@@ -1,7 +1,8 @@
 package com.cc.services
 
+import com.cc.config.ApiAppConfig
 import com.cc.db.dao.ProductDao
-import com.cc.domain.{Product, ProductId}
+import com.cc.domain.Product
 import com.cc.domain.request.ProductRequest
 import com.cc.services.ServiceResponse._
 import com.typesafe.scalalogging.LazyLogging
@@ -9,7 +10,7 @@ import com.typesafe.scalalogging.LazyLogging
 import java.util.UUID
 import scala.concurrent.{ExecutionContext, Future}
 
-class ProductsService()(implicit ec: ExecutionContext) extends LazyLogging {
+class ProductsService(config: ApiAppConfig)(implicit ec: ExecutionContext) extends LazyLogging {
 
   def addProduct(uuid: UUID, productData: ProductRequest): Future[ServiceResponse] = {
     //TODO validations must be implemented here (Cats Validated)
@@ -34,7 +35,7 @@ class ProductsService()(implicit ec: ExecutionContext) extends LazyLogging {
 
   def getListOfProducts(vendorName: Option[String]): Future[ServiceResponse] = {
     val result: Future[Seq[Product]] = vendorName match {
-      case Some(name) => ProductDao.findByVendor(name)
+      case Some(name) => ProductDao.findByVendor(name, config.general.defaultCaseSensitiveSearch)
       case None       => ProductDao.findAll
     }
     result

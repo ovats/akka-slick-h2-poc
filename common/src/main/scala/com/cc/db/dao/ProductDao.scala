@@ -16,9 +16,13 @@ object ProductDao extends BaseDao {
   def delete(idProd: ProductId): Future[Int]           = productsTable.filter(_.id === idProd).delete
 
   // Other operations
-  def findByUUID(id: UUID): Future[Option[Product]]          = productsTable.filter(_.uuid === id).result.headOption
-  def findByVendor(vendorName: String): Future[Seq[Product]] = productsTable.filter(_.vendor === vendorName).result
-
+  def findByUUID(id: UUID): Future[Option[Product]] = productsTable.filter(_.uuid === id).result.headOption
+  def findByVendor(vendorName: String, caseSensitive: Boolean): Future[Seq[Product]] = {
+    if (caseSensitive)
+      productsTable.filter(_.vendor === vendorName).result
+    else
+      productsTable.filter(_.vendor.toLowerCase === vendorName.toLowerCase()).result
+  }
   // For creating products table
   def createSchema: Future[Unit] = db.run(productsTable.schema.create)
 
