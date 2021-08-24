@@ -32,16 +32,10 @@ object Dependencies {
     val akkaHttp      = "com.typesafe.akka" %% "akka-http"       % Versions.akkaHttpVersion
     val akkaStream    = "com.typesafe.akka" %% "akka-stream"     % Versions.akkaVersion
     val akkaHttpCirce = "de.heikoseeberger" %% "akka-http-circe" % Versions.akkaHttpCirceVersion
-    //val akkaTestKit   = "com.typesafe.akka" %% "akka-testkit"      % Versions.akkaVersion
-    //val akkHttpTest   = "com.typesafe.akka" %% "akka-http-testkit" % Versions.akkaHttpVersion % Test
-
-    //TODO why is this needed??
-    //val akkaTest = "com.typesafe.akka" %% "akka-actor-testkit-typed" % Versions.akkaVersion % Test
 
     // Circe
     val circeCore    = "io.circe" %% "circe-core"    % Versions.circeVersion
     val circeGeneric = "io.circe" %% "circe-generic" % Versions.circeVersion
-    //val circeExtras  = "io.circe" %% "circe-generic-extras" % Versions.circeVersion
 
     // PureConfig
     val pureConfig = "com.github.pureconfig" %% "pureconfig" % Versions.pureConfigVersion
