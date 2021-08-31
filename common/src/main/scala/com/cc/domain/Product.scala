@@ -4,7 +4,7 @@ import com.cc.domain.request.ProductRequest
 
 import java.time.LocalDate
 
-case class Product(
+final case class Product(
     id: Option[ProductId],
     name: String,
     vendor: String,
