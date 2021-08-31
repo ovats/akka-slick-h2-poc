@@ -4,6 +4,7 @@ import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.testkit.ScalatestRouteTest
 import com.cc.config.ApiAppConfig
 import com.cc.db.dao.ProductDao
+import com.cc.domain.Product
 import com.cc.services.ProductsService
 import com.cc.services.ServiceResponse.ValidationErrors
 import com.cc.test.BaseSpec
@@ -37,6 +38,26 @@ class ProductRoutesSpec extends BaseSpec with ScalatestRouteTest with FailFastCi
     val request = Post(uri = s"/products", productRequest)
     request ~> productRoutes.routes ~> check {
       status shouldBe StatusCodes.OK
+    }
+  }
+
+  "DELETE /products/{id}" should "return 204 No Content when deleting a product" in {
+    val expirationDate = LocalDate.now().plusDays(1)
+    val id = ProductDao
+      .create(
+        Product(id = None, name = "name", vendor = "vendor", price = 100, expirationDate = Option(expirationDate))
+      )
+      .futureValue
+    val request = Delete(uri = s"/products/$id")
+    request ~> productRoutes.routes ~> check {
+      status shouldBe StatusCodes.NoContent
+    }
+  }
+
+  it should "return 404 Not Found when deleting a product" in {
+    val request = Delete(uri = s"/products/123456")
+    request ~> productRoutes.routes ~> check {
+      status shouldBe StatusCodes.NotFound
     }
   }
 

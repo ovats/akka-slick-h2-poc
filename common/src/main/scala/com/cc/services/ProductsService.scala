@@ -2,7 +2,7 @@ package com.cc.services
 
 import com.cc.config.ApiAppConfig
 import com.cc.db.dao.ProductDao
-import com.cc.domain.Product
+import com.cc.domain.{Product, ProductId}
 import com.cc.domain.request.ProductRequest
 import com.cc.services.ServiceResponse._
 import com.typesafe.scalalogging.LazyLogging
@@ -29,7 +29,21 @@ class ProductsService(config: ApiAppConfig)(implicit ec: ExecutionContext) exten
           val errorMsg = s"Error when creating product: ${e.getMessage}"
           Future.successful(UnknownError(errorMsg))
       }
+  }
 
+  def deleteProduct(productId: ProductId): Future[ServiceResponse] = {
+    ProductDao.findById(productId).flatMap {
+      case None => Future.successful(ProductNotFound)
+      case Some(_) =>
+        ProductDao
+          .delete(productId)
+          .map(_ => ProductDeleted)
+          .recoverWith {
+            case e: Throwable =>
+              val errorMsg = s"Error when deleting product: ${e.getMessage}"
+              Future.successful(UnknownError(errorMsg))
+          }
+    }
   }
 
   def getListOfProducts(vendorName: Option[String]): Future[ServiceResponse] = {
