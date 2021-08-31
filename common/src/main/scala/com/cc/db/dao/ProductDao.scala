@@ -4,7 +4,6 @@ import com.cc.db.BaseDao
 import com.cc.domain.{Product, ProductId}
 import slick.jdbc.H2Profile.api._
 
-import java.util.UUID
 import scala.concurrent.Future
 
 object ProductDao extends BaseDao {
@@ -12,7 +11,6 @@ object ProductDao extends BaseDao {
   // Standard CRUD
   def create(product: Product): Future[ProductId]      = productsTable.returning(productsTable.map(_.id)) += product
   def findById(id: ProductId): Future[Option[Product]] = productsTable.filter(_.id === id).result.headOption
-  def findByUUID(id: UUID): Future[Option[Product]]    = productsTable.filter(_.uuid === id).result.headOption
   def delete(idProd: ProductId): Future[Int]           = productsTable.filter(_.id === idProd).delete
   def findAll: Future[Seq[Product]]                    = productsTable.result
 

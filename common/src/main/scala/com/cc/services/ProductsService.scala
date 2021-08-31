@@ -7,34 +7,29 @@ import com.cc.domain.request.ProductRequest
 import com.cc.services.ServiceResponse._
 import com.typesafe.scalalogging.LazyLogging
 
-import java.util.UUID
 import scala.concurrent.{ExecutionContext, Future}
 
 class ProductsService(config: ApiAppConfig)(implicit ec: ExecutionContext) extends LazyLogging {
 
-  def addProduct(uuid: UUID, productData: ProductRequest): Future[ServiceResponse] = {
+  def addProduct(productData: ProductRequest): Future[ServiceResponse] = {
     //TODO validations must be implemented here (Cats Validated)
-    ProductDao.findByUUID(uuid).flatMap {
-      case Some(_) => Future.successful(ProductAlreadyExists)
-      case None =>
-        val newProduct =
-          Product(
-            id = None,
-            name = productData.name,
-            vendor = productData.vendor,
-            price = productData.price,
-            uuid = uuid,
-            productData.expirationDate,
-          )
-        ProductDao
-          .create(newProduct)
-          .map(newId => ProductCreated(newId.toString))
-          .recoverWith {
-            case e: Throwable =>
-              val errorMsg = s"Error when creating product uuid $uuid: ${e.getMessage}"
-              Future.successful(UnknownError(errorMsg))
-          }
-    }
+    val newProduct =
+      Product(
+        id = None,
+        name = productData.name,
+        vendor = productData.vendor,
+        price = productData.price,
+        productData.expirationDate,
+      )
+    ProductDao
+      .create(newProduct)
+      .map(newId => ProductCreated(newId.toString))
+      .recoverWith {
+        case e: Throwable =>
+          val errorMsg = s"Error when creating product: ${e.getMessage}"
+          Future.successful(UnknownError(errorMsg))
+      }
+
   }
 
   def getListOfProducts(vendorName: Option[String]): Future[ServiceResponse] = {
