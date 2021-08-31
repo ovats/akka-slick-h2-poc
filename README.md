@@ -11,19 +11,18 @@ The project is divided in two parts:
 - api: code related for API Rest.
 - common: all common classes, objects and traits.
 
-## Run in local environment
+## Requirements
 
-From the terminal just run:
+You will need:
 
-```
-sbt api/run
-```
+- Java 11
+- sbt
 
 ## API
 
 There are three endpoints implemented:
 
-- POST /products/uuid => add new products
+- POST /products => add new products
 - GET /products?vendor=name => retrieve the list of products (all products or filtered by vendor)
 - GET /ping
 
@@ -31,7 +30,7 @@ There are three endpoints implemented:
 
 ```
 curl -X POST \
-  http://localhost:8080/products/52ae4ed7-d318-44ac-8c33-a4ad6a3c0d35 \
+  http://localhost:8080/products \
   -H 'Content-Type: application/json' \
   -d '{
     "name": "iphone",
@@ -45,7 +44,7 @@ The field `expirationDate` is optional, so the following request is also valid:
 
 ```
 curl -X POST \
-  http://localhost:8080/products/a96ff2e7-5453-4946-9ffe-492521222a5e \
+  http://localhost:8080/products \
   -H 'Content-Type: application/json' \
   -d '{
     "name": "macbook pro",
@@ -74,6 +73,22 @@ This is just an endpoint health check.
 
 ```
 curl -X GET  http://localhost:8080/ping 
+```
+
+## Run in local environment
+
+From the terminal just run:
+
+```
+sbt api/run
+```
+
+## Run tests
+
+From a console/terminal run:
+
+```
+sbt test
 ```
 
 ## Pending 

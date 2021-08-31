@@ -12,7 +12,6 @@ import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport
 import io.circe.generic.auto._
 
 import java.time.LocalDate
-import java.util.UUID
 
 class ProductRoutesSpec extends BaseSpec with ScalatestRouteTest with FailFastCirceSupport {
 
@@ -21,53 +20,23 @@ class ProductRoutesSpec extends BaseSpec with ScalatestRouteTest with FailFastCi
   private val productRoutes   = new ProductRoutes(productsService)
   ProductDao.createSchema()
 
-  "POST /products/{uuid}" should "return 200 Ok when adding a new product" in {
-    val uuid           = UUID.randomUUID()
+  "POST /products" should "return 200 Ok when adding a new product" in {
     val expirationDate = LocalDate.now().plusDays(1)
     val productRequest =
       ProductView(name = "name", vendor = "vendor", price = 10.99, expirationDate = Option(expirationDate))
-    val request = Post(uri = s"/products/$uuid", productRequest)
+    val request = Post(uri = s"/products", productRequest)
     request ~> productRoutes.routes ~> check {
       status shouldBe StatusCodes.OK
     }
   }
 
   it should "return 200 Ok when adding a new product without expiration date" in {
-    val uuid           = UUID.randomUUID()
     val expirationDate = LocalDate.now().plusDays(1)
     val productRequest =
       ProductView(name = "name", vendor = "vendor", price = 10.99, expirationDate = Option(expirationDate))
-    val request = Post(uri = s"/products/$uuid", productRequest)
+    val request = Post(uri = s"/products", productRequest)
     request ~> productRoutes.routes ~> check {
       status shouldBe StatusCodes.OK
-    }
-  }
-
-  it should "return 400 Bad Request when uuid is not valid" in {
-    val expirationDate = LocalDate.now().plusDays(1)
-    val productRequest =
-      ProductView(name = "name", vendor = "vendor", price = 10.99, expirationDate = Option(expirationDate))
-    val request = Post(uri = s"/products/1234", productRequest)
-    request ~> productRoutes.routes ~> check {
-      status shouldBe StatusCodes.BadRequest
-    }
-  }
-
-  it should "return 409 Conflict when trying to add a product with an uuid already existing" in {
-    val uuid           = UUID.randomUUID()
-    val expirationDate = LocalDate.now().plusDays(1)
-    val productRequest1 =
-      ProductView(name = "name", vendor = "vendor", price = 10.99, expirationDate = Option(expirationDate))
-    val request1 = Post(uri = s"/products/$uuid", productRequest1)
-    request1 ~> productRoutes.routes ~> check {
-      status shouldBe StatusCodes.OK
-    }
-
-    val productRequest2 =
-      ProductView(name = "name2", vendor = "vendor2", price = 28.99, expirationDate = Option(expirationDate))
-    val request2 = Post(uri = s"/products/$uuid", productRequest2)
-    request2 ~> productRoutes.routes ~> check {
-      status shouldBe StatusCodes.Conflict
     }
   }
 

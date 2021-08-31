@@ -3,15 +3,12 @@ package com.cc.domain
 import com.cc.domain.request.ProductRequest
 
 import java.time.LocalDate
-import java.util.UUID
 
-//TODO expire date must be added
-case class Product(
+final case class Product(
     id: Option[ProductId],
     name: String,
     vendor: String,
     price: BigDecimal,
-    uuid: UUID,
     expirationDate: Option[LocalDate],
 ) {
 
