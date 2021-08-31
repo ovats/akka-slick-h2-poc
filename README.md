@@ -23,6 +23,7 @@ You will need:
 There are three endpoints implemented:
 
 - POST /products => add new products
+- DELETE /products/{id} => delete products
 - GET /products?vendor=name => retrieve the list of products (all products or filtered by vendor)
 - GET /ping
 
@@ -51,6 +52,14 @@ curl -X POST \
     "vendor": "apple",
     "price": 200
 }'
+```
+
+### DELETE /products/{id}
+
+Delete a product from the store:
+
+```
+curl -X DELETE http://localhost:8080/products/123
 ```
 
 ### GET /products?vendor=name
@@ -94,6 +103,8 @@ sbt test
 ## Pending 
 
 - Improvements in design in Database layer.
+- Add UPDATE (CRUD)
+- Add business validation (Cats.Validated)
 - Unit tests
 - Documentation of how to replace H2 with other databases like MySql, Postgres, etc.
 - OAS Specification (documentation)
