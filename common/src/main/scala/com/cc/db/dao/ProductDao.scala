@@ -23,7 +23,8 @@ object ProductDao extends BaseDao {
     else
       productsTable.filter(_.vendor.toLowerCase === vendorName.toLowerCase()).result
   }
-  // For creating products table
-  def createSchema: Future[Unit] = db.run(productsTable.schema.create)
+
+  def createSchema(): Future[Unit] = db.run(productsTable.schema.create)
+  def deleteAll(): Future[Int]     = db.run(productsTable.delete)
 
 }

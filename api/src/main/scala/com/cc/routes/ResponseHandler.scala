@@ -4,7 +4,7 @@ import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.server.Directives.complete
 import akka.http.scaladsl.server.StandardRoute
 import com.cc.services.ServiceResponse
-import com.cc.services.ServiceResponse.ErrorWhenCreatingProduct
+import com.cc.services.ServiceResponse._
 import com.typesafe.scalalogging.LazyLogging
 import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport
 import io.circe.generic.auto._
@@ -12,7 +12,7 @@ import io.circe.generic.auto._
 trait ResponseHandler extends LazyLogging with FailFastCirceSupport {
   def handleServiceResponse(response: ServiceResponse, entity: String): StandardRoute = {
     response match {
-      case ErrorWhenCreatingProduct(errorMsg) =>
+      case UnknownError(errorMsg) =>
         val errorMessage = s"There was an error when creating ($entity): $errorMsg"
         logger.error(errorMessage)
         complete(StatusCodes.InternalServerError, errorMessage)
@@ -31,4 +31,6 @@ trait ResponseHandler extends LazyLogging with FailFastCirceSupport {
   }
 }
 
-case class ApiResponse(status: String = "ok", message: String)
+//TODO remove ApiResponse
+final case class ApiResponse(status: String = "ok", message: String)
+final case class ErrorsResponse(errors: Seq[String])

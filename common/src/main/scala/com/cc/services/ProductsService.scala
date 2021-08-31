@@ -14,23 +14,27 @@ class ProductsService(config: ApiAppConfig)(implicit ec: ExecutionContext) exten
 
   def addProduct(uuid: UUID, productData: ProductRequest): Future[ServiceResponse] = {
     //TODO validations must be implemented here (Cats Validated)
-    val newProduct =
-      Product(
-        id = None,
-        name = productData.name,
-        vendor = productData.vendor,
-        price = productData.price,
-        uuid = uuid,
-        productData.expirationDate,
-      )
-    ProductDao
-      .create(newProduct)
-      .map(newId => ProductCreated(newId.toString))
-      .recoverWith {
-        case e: Throwable =>
-          val errorMsg = s"Error when creating product uuid $uuid: ${e.getMessage}"
-          Future.successful(ErrorWhenCreatingProduct(errorMsg))
-      }
+    ProductDao.findByUUID(uuid).flatMap {
+      case Some(_) => Future.successful(ProductAlreadyExists)
+      case None =>
+        val newProduct =
+          Product(
+            id = None,
+            name = productData.name,
+            vendor = productData.vendor,
+            price = productData.price,
+            uuid = uuid,
+            productData.expirationDate,
+          )
+        ProductDao
+          .create(newProduct)
+          .map(newId => ProductCreated(newId.toString))
+          .recoverWith {
+            case e: Throwable =>
+              val errorMsg = s"Error when creating product uuid $uuid: ${e.getMessage}"
+              Future.successful(UnknownError(errorMsg))
+          }
+    }
   }
 
   def getListOfProducts(vendorName: Option[String]): Future[ServiceResponse] = {
@@ -44,7 +48,7 @@ class ProductsService(config: ApiAppConfig)(implicit ec: ExecutionContext) exten
         case e: Throwable =>
           val errorMsg = s"Error when retrieving list of products: ${e.getMessage}"
           logger.error(errorMsg, e)
-          Future.successful(ErrorWhenCreatingProduct(errorMsg))
+          Future.successful(UnknownError(errorMsg))
       }
 
   }
