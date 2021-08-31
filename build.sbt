@@ -34,13 +34,13 @@ lazy val common = project
   .settings(
     name := "common",
     settings,
-    libraryDependencies ++= db ++ basicDeps ++ circe,
+    libraryDependencies ++= db ++ basicDeps ++ circe ++ unitTests,
   )
 
 lazy val api = project
   .settings(
     name := "api",
     settings,
-    libraryDependencies ++= db ++ basicDeps ++ akka ++ circe,
+    libraryDependencies ++= db ++ basicDeps ++ akka ++ circe ++ unitTests,
   )
   .dependsOn(common)

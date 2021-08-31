@@ -7,6 +7,7 @@ import com.cc.domain.request.ProductRequest
 import com.cc.services.ServiceResponse._
 import com.cc.services.{ProductsService, ServiceResponse}
 import com.typesafe.scalalogging.LazyLogging
+import io.circe.generic.auto._
 
 import java.util.UUID
 import scala.concurrent.Future
@@ -26,6 +27,8 @@ class ProductRoutes(productsService: ProductsService) extends LazyLogging with R
               onComplete(fut) {
                 case Success(ProductCreated(newId)) =>
                   complete(StatusCodes.OK, s"New product id: $newId")
+                case Success(ProductAlreadyExists) =>
+                  complete(StatusCodes.Conflict, ErrorsResponse(List(s"Product already exists with uuid $validUuid")))
                 case Success(response) => handleServiceResponse(response, "products")
                 case Failure(ex)       => handleFailure(ex, "products")
               }

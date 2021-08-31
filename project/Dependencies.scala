@@ -1,3 +1,4 @@
+import Dependencies.Libraries.{akkHttpTest, akkaTestKit, scalaTest}
 import Dependencies.Versions._
 import sbt._
 
@@ -16,6 +17,8 @@ object Dependencies {
     val scalaLoggingVersion = "3.9.4"
     val pureConfigVersion   = "0.16.0"
 
+    val scalaTestVersion = "3.2.9"
+
   }
 
   object Libraries {
@@ -28,10 +31,12 @@ object Dependencies {
     val logback      = "ch.qos.logback"              % "logback-classic" % logbackVersion
 
     // Akka Framework
-    val akkaActors    = "com.typesafe.akka" %% "akka-actor"      % Versions.akkaVersion
-    val akkaHttp      = "com.typesafe.akka" %% "akka-http"       % Versions.akkaHttpVersion
-    val akkaStream    = "com.typesafe.akka" %% "akka-stream"     % Versions.akkaVersion
-    val akkaHttpCirce = "de.heikoseeberger" %% "akka-http-circe" % Versions.akkaHttpCirceVersion
+    val akkaActors    = "com.typesafe.akka" %% "akka-actor"        % Versions.akkaVersion
+    val akkaHttp      = "com.typesafe.akka" %% "akka-http"         % Versions.akkaHttpVersion
+    val akkaStream    = "com.typesafe.akka" %% "akka-stream"       % Versions.akkaVersion
+    val akkaHttpCirce = "de.heikoseeberger" %% "akka-http-circe"   % Versions.akkaHttpCirceVersion
+    val akkHttpTest   = "com.typesafe.akka" %% "akka-http-testkit" % Versions.akkaHttpVersion % Test
+    val akkaTestKit   = "com.typesafe.akka" %% "akka-testkit"      % Versions.akkaVersion
 
     // Circe
     val circeCore    = "io.circe" %% "circe-core"    % Versions.circeVersion
@@ -40,10 +45,14 @@ object Dependencies {
     // PureConfig
     val pureConfig = "com.github.pureconfig" %% "pureconfig" % Versions.pureConfigVersion
 
+    // ScalaTest
+    val scalaTest = "org.scalatest" %% "scalatest" % Versions.scalaTestVersion
+
     val basicDeps = Seq(logback, scalaLogging, pureConfig)
     val db        = Seq(slick, h2Db)
     val akka      = Seq(akkaActors, akkaHttp, akkaStream, akkaHttpCirce)
     val circe     = Seq(circeCore, circeGeneric)
+    val unitTests = Seq(scalaTest, akkHttpTest, akkaTestKit)
   }
 
 }
