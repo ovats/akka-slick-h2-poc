@@ -10,13 +10,13 @@ import scala.concurrent.Future
 object ProductDao extends BaseDao {
 
   // Standard CRUD
-  def findAll: Future[Seq[Product]]                    = productsTable.result
   def create(product: Product): Future[ProductId]      = productsTable.returning(productsTable.map(_.id)) += product
   def findById(id: ProductId): Future[Option[Product]] = productsTable.filter(_.id === id).result.headOption
+  def findByUUID(id: UUID): Future[Option[Product]]    = productsTable.filter(_.uuid === id).result.headOption
   def delete(idProd: ProductId): Future[Int]           = productsTable.filter(_.id === idProd).delete
+  def findAll: Future[Seq[Product]]                    = productsTable.result
 
   // Other operations
-  def findByUUID(id: UUID): Future[Option[Product]] = productsTable.filter(_.uuid === id).result.headOption
   def findByVendor(vendorName: String, caseSensitive: Boolean): Future[Seq[Product]] = {
     if (caseSensitive)
       productsTable.filter(_.vendor === vendorName).result
