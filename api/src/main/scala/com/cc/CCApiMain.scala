@@ -28,7 +28,7 @@ object CCApiMain extends LazyLogging {
     //TODO maybe add a context class for services, routes, config, etc
 
     // Service layer
-    val productsService = new ProductsService(config)
+    val productsService = new ProductsService()
 
     // API Rest
     val routes: Route =

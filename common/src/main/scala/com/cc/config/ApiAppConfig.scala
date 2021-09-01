@@ -1,16 +1,15 @@
 package com.cc.config
 
-import com.cc.config.ApiAppConfig.{General, HttpConfig}
+import com.cc.config.ApiAppConfig.HttpConfig
 import com.typesafe.scalalogging.LazyLogging
 import pureconfig.ConfigSource
 import pureconfig.generic.auto._
 
-final case class ApiAppConfig(general: General, http: HttpConfig)
+final case class ApiAppConfig(http: HttpConfig)
 
 object ApiAppConfig extends LazyLogging {
 
   final case class HttpConfig(host: String, port: Int)
-  final case class General(defaultCaseSensitiveSearch: Boolean)
 
   def apply(resource: String = "application.conf"): ApiAppConfig = {
     ConfigSource.resources(resource).load[ApiAppConfig] match {

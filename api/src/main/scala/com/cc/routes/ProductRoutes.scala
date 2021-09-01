@@ -3,20 +3,21 @@ package com.cc.routes
 import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
-import com.cc.domain.request.ProductRequest
 import com.cc.services.ServiceResponse._
 import com.cc.services.{ProductsService, ServiceResponse}
+import com.cc.view.ProductView
 import com.typesafe.scalalogging.LazyLogging
+import io.circe.generic.auto._
 
 import scala.concurrent.Future
-import scala.util.{Failure, Success, Try}
+import scala.util.{Failure, Success}
 
 class ProductRoutes(productsService: ProductsService) extends LazyLogging with RoutesConfig with ResponseHandler {
 
   private val createProduct = post {
     pathEndOrSingleSlash {
       logger.debug(s"POST /products")
-      entity(as[ProductRequest]) { productData =>
+      entity(as[ProductView]) { productData =>
         val fut = productsService.addProduct(productData)
         onComplete(fut) {
           case Success(ProductCreated(newId)) =>
@@ -44,16 +45,33 @@ class ProductRoutes(productsService: ProductsService) extends LazyLogging with R
   }
 
   private val findProducts = get {
-    pathEndOrSingleSlash {
-      parameters('vendor ?) { vendorName =>
-        logger.debug(s"GET /products?vendor=")
-        val fut: Future[ServiceResponse] = productsService.getListOfProducts(vendorName)
-        onComplete(fut) {
-          case Success(ProductList(products)) =>
-            complete(StatusCodes.OK, products.map(_.toProductView))
-          case Success(response) => handleServiceResponse(response, "products")
-          case Failure(ex)       => handleFailure(ex, "products")
-        }
+    parameters("vendor".as[String], "case".as[String].withDefault("no")) { (vendorName, caseSensitive) =>
+      logger.debug(s"GET /products?vendor=")
+      val fut: Future[ServiceResponse] = productsService.getProductsFilteredByVendor(vendorName, caseSensitive)
+      onComplete(fut) {
+        case Success(ProductList(products)) =>
+          complete(StatusCodes.OK, products.map(_.toRestView))
+        case Success(response) => handleServiceResponse(response, "products")
+        case Failure(ex)       => handleFailure(ex, "products")
+      }
+    } ~ pathEndOrSingleSlash {
+      logger.debug(s"GET /products")
+      val fut: Future[ServiceResponse] = productsService.getAllProducts()
+      onComplete(fut) {
+        case Success(ProductList(products)) =>
+          complete(StatusCodes.OK, products.map(_.toRestView))
+        case Success(response) => handleServiceResponse(response, "products")
+        case Failure(ex)       => handleFailure(ex, "products")
+      }
+    } ~ path(IntNumber) { id =>
+      logger.debug(s"GET /products/$id")
+      val fut = productsService.getProductById(id)
+      onComplete(fut) {
+        case Success(ProductFound(p)) => complete(StatusCodes.OK, p.toRestView)
+        case Success(ProductNotFound) =>
+          complete(StatusCodes.NotFound, ErrorsResponse(List(s"Not found id: $id")))
+        case Success(response) => handleServiceResponse(response, "products")
+        case Failure(ex)       => handleFailure(ex, "products")
       }
     }
   }
