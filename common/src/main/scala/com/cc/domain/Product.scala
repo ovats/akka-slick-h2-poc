@@ -1,7 +1,5 @@
 package com.cc.domain
 
-import com.cc.domain.request.ProductRequest
-
 import java.time.LocalDate
 
 final case class Product(
@@ -10,11 +8,4 @@ final case class Product(
     vendor: String,
     price: BigDecimal,
     expirationDate: Option[LocalDate],
-) {
-
-  //TODO not sure if this code is fine here
-  def toProductView: ProductRequest = {
-    ProductRequest(name = this.name, vendor = this.vendor, price = this.price, expirationDate = this.expirationDate)
-  }
-
-}
+)
