@@ -2,11 +2,11 @@
 
 ## Overview
 
-This is a POC for learning Slick and H2 db.
+This is a POC for learning Slick and H2 DB.
 
 Project working in progress.
 
-The project is divided in two parts:
+The project contains two subprojects:
 
 - api: code related for API Rest.
 - common: all common classes, objects and traits.
@@ -22,10 +22,12 @@ You will need:
 
 There are three endpoints implemented:
 
-- POST /products => add new products
-- DELETE /products/{id} => delete products
-- GET /products?vendor=name => retrieve the list of products (all products or filtered by vendor)
-- GET /ping
+- `POST /products` => add new products
+- `DELETE /products/{id}` => delete products
+- `GET /products/{id}` => get product data of a given id
+- `GET /products` => get the list of all products stored
+- `GET /products?vendor=name` => retrieve the list of products filtered by vendor
+- `GET /ping`
 
 ### POST /products
 
@@ -56,21 +58,31 @@ curl -X POST \
 
 ### DELETE /products/{id}
 
-Delete a product from the store:
+Delete a `product`:
 
 ```
 curl -X DELETE http://localhost:8080/products/123
 ```
 
-### GET /products?vendor=name
+### GET /products/{id}
 
-You can get the list of all products:
+Get the data of a `product`:
+
+```
+curl -X GET http://localhost:8080/products/id/123456
+```
+
+### GET /products
+
+Get the list of all `products`:
 
 ```
 curl -X GET http://localhost:8080/products 
 ```
 
-Or you can filter by `vendor`:
+### GET /products?vendor=name
+
+Get the list of `products` filtered by `vendor`:
 
 ```
 curl -X GET 'http://localhost:8080/products?vendor=apple' 
