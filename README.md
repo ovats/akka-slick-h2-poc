@@ -22,8 +22,9 @@ You will need:
 
 There are three endpoints implemented:
 
-- `POST /products` => add new products
-- `DELETE /products/{id}` => delete products
+- `POST /products` => add new product
+- `PUT /products/{id}` => update product
+- `DELETE /products/{id}` => delete product
 - `GET /products/{id}` => get product data of a given id
 - `GET /products` => get the list of all products stored
 - `GET /products?vendor=name` => retrieve the list of products filtered by vendor
@@ -53,6 +54,20 @@ curl -X POST \
     "name": "macbook pro",
     "vendor": "apple",
     "price": 200
+}'
+```
+
+### PUT /products/{id}
+
+```
+curl -X PUT \
+  http://localhost:8080/products/123 \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "name": "iphone",
+    "vendor": "apple",
+    "price": 100,
+    "expirationDate": "2021-05-05"
 }'
 ```
 
@@ -115,7 +130,6 @@ sbt test
 ## Pending 
 
 - Improvements in design in Database layer.
-- Add UPDATE (CRUD)
 - Add business validation (Cats.Validated)
 - Unit tests
 - Documentation of how to replace H2 with other databases like MySql, Postgres, etc.
