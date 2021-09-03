@@ -39,6 +39,24 @@ class ProductRoutesSpec extends BaseSpec with ScalatestRouteTest with FailFastCi
     }
   }
 
+  "PUT /products/{id}" should "return 200 Ok when updating a product" in {
+    val expirationDate = LocalDate.now().plusDays(1)
+    val pr             = Product(id = None, name = "name", vendor = "vendor", price = 100, expirationDate = Option(expirationDate))
+    val idProd         = ProductDao.create(pr).futureValue
+    val request        = Put(uri = s"/products/$idProd", pr.toRestView)
+    request ~> productRoutes.routes ~> check {
+      status shouldBe StatusCodes.OK
+    }
+  }
+
+  it should "return 404 Not Found when updating a product that does not exist" in {
+    val prod    = ProductView(name = "name", vendor = "vendor", price = 100, expirationDate = None)
+    val request = Put(uri = s"/products/123456", prod)
+    request ~> productRoutes.routes ~> check {
+      status shouldBe StatusCodes.NotFound
+    }
+  }
+
   "DELETE /products/{id}" should "return 204 No Content when deleting a product" in {
     val expirationDate = LocalDate.now().plusDays(1)
     val id = ProductDao
@@ -52,7 +70,7 @@ class ProductRoutesSpec extends BaseSpec with ScalatestRouteTest with FailFastCi
     }
   }
 
-  it should "return 404 Not Found when deleting a product" in {
+  it should "return 404 Not Found when deleting a product that does not exist" in {
     val request = Delete(uri = s"/products/123456")
     request ~> productRoutes.routes ~> check {
       status shouldBe StatusCodes.NotFound

@@ -26,6 +26,25 @@ class ProductsService()(implicit ec: ExecutionContext) extends LazyLogging {
       .recoverWith(handleExceptions(None, "creating"))
   }
 
+  def updateProduct(productId: ProductId, productData: ProductView): Future[ServiceResponse] = {
+    ProductDao.findById(productId).flatMap {
+      case None => Future.successful(ProductNotFound)
+      case Some(_) =>
+        val product =
+          Product(
+            id = Option(productId),
+            name = productData.name,
+            vendor = productData.vendor,
+            price = productData.price,
+            productData.expirationDate,
+          )
+        ProductDao
+          .update(product)
+          .map(_ => ProductUpdated(product))
+          .recoverWith(handleExceptions(Some(productId), "updating"))
+    }
+  }
+
   def deleteProduct(productId: ProductId): Future[ServiceResponse] = {
     ProductDao.findById(productId).flatMap {
       case None => Future.successful(ProductNotFound)

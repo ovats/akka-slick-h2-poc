@@ -29,6 +29,23 @@ class ProductRoutes(productsService: ProductsService) extends LazyLogging with R
     }
   }
 
+  private val updateProduct = put {
+    path(IntNumber) { prodId =>
+      pathEndOrSingleSlash {
+        logger.debug(s"PUT /products")
+        entity(as[ProductView]) { productData =>
+          val fut = productsService.updateProduct(prodId, productData)
+          onComplete(fut) {
+            case Success(ProductUpdated(p)) => complete(StatusCodes.OK, p.toRestView)
+            case Success(ProductNotFound)   => complete(StatusCodes.NotFound, s"Product not found id: $prodId")
+            case Success(response)          => handleServiceResponse(response, "products")
+            case Failure(ex)                => handleFailure(ex, "products")
+          }
+        }
+      }
+    }
+  }
+
   private val deleteProduct = delete {
     path(IntNumber) { prodId =>
       pathEndOrSingleSlash {
@@ -77,7 +94,7 @@ class ProductRoutes(productsService: ProductsService) extends LazyLogging with R
   }
 
   val routes: Route = pathPrefix("products") {
-    findProducts ~ createProduct ~ deleteProduct
+    findProducts ~ createProduct ~ deleteProduct ~ updateProduct
   }
 
 }
